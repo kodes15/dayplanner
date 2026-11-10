@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraPlan — Calming Daily Flow & Schedule</title>
+  <meta name="description" content="A calm, active dark-mode daily planner that allocates time for your tasks and guides you through each moment of your day.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Calm Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-orb">
+          <div class="orb-core"></div>
+          <div class="orb-pulse"></div>
+        </div>
+        <div class="brand-text">
+          <h1>AuraPlan</h1>
+          <span class="brand-tagline">Present Moment Day Planner</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <!-- Live Clock & Status Badge -->
+        <div class="live-clock-pill">
+          <div class="live-dot active-dot"></div>
+          <span id="liveClock" class="clock-display">00:00:00</span>
+          <span id="liveDate" class="date-display">Today</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="soundToggleBtn" class="icon-btn" title="Toggle audio bell & chimes" aria-label="Toggle chime sounds">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="sound-indicator">ON</span>
+        </button>
+
+        <button id="daySettingsBtn" class="icon-btn" title="Day & Break Settings" aria-label="Day Settings">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+
+        <button id="quickSampleBtn" class="pill-btn outline" title="Populate an inspiring sample day">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>Demo Day</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-layout">
+      <!-- Left / Top Primary: The "ACTIVE NOW" Guidance Engine -->
+      <section class="now-hero-section">
+        <div class="now-hero-card" id="nowHeroCard">
+          <div class="card-ambient-glow"></div>
+          
+          <div class="now-badge-row">
+            <div class="now-status-pill" id="nowStatusPill">
+              <span class="pulsing-radar"></span>
+              <span id="nowStatusLabel">CURRENT FOCUS</span>
+            </div>
+            <div class="now-time-range" id="nowTimeRange">--:-- — --:--</div>
+          </div>
+
+          <div class="now-content">
+            <h2 id="nowTaskTitle" class="now-title">No task active right now</h2>
+            <p id="nowTaskSubtitle" class="now-subtitle">Add tasks to plan your day, or relax in the present moment.</p>
+            
+            <div class="now-tags-row" id="nowTagsRow">
+              <!-- Category and Duration Badges -->
+            </div>
+          </div>
+
+          <!-- Calm Breathing Widget (Visible during Breaks) -->
+          <div class="breathing-widget hidden" id="breathingWidget">
+            <div class="breathe-circle-container">
+              <div class="breathe-circle" id="breatheCircle">
+                <span id="breatheText">Inhale</span>
+              </div>
+            </div>
+            <p class="breathe-hint">Breathe gently with the expanding ring. Rest your eyes.</p>
+          </div>
+
+          <!-- Live Quick Actions -->
+          <div class="now-actions-row" id="nowActionsRow">
+            <button id="btnCompleteNow" class="action-btn primary" title="Mark current task done">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Done</span>
+            </button>
+            <button id="btnAddPauseNow" class="action-btn secondary" title="Add 5-minute calm break right now">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>+5m Pause</span>
+            </button>
+            <button id="btnSkipNextNow" class="action-btn subtle" title="Jump to next scheduled item">
+              <span>Next</span>
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Quick Shift to Current Time Button (Visible when idle/past) -->
+          <div class="align-now-wrap hidden" id="alignNowWrap" style="margin-top: 1rem; text-align: center;">
+            <button id="btnAlignNow" class="pill-btn outline" style="width: 100%; justify-content: center; font-size: 0.82rem;">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Shift Schedule to Start Right Now</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Daily Rhythm Summary Bar -->
+        <div class="day-stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Tasks Done</span>
+            <div class="stat-value"><span id="statCompletedCount">0</span><span class="stat-sub" id="statTotalCount">/ 0</span></div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Focus Time</span>
+            <div class="stat-value" id="statFocusTime">0h 0m</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Calm Breaks</span>
+            <div class="stat-value" id="statBreakTime">0h 0m</div>
+          </div>
+          <div class="stat-card highlight">
+            <span class="stat-label">Day Harmony</span>
+            <div class="stat-value" id="statProgressScore">0%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center & Right Split: Task Adder + Chronological Day Timeline -->
+      <section class="schedule-section">
+        <!-- Action Tool Bar -->
+        <div class="schedule-toolbar">
+          <div class="toolbar-left">
+            <h3>Your Day Timeline</h3>
+            <span class="timeline-indicator" id="timelineCountIndicator">0 blocks</span>
+          </div>
+          <div class="toolbar-actions">
+            <button id="btnAutoDistribute" class="pill-btn accent" title="Re-allocate tasks smoothly across waking hours with mindful breaks">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              <span>Auto-Balance Schedule</span>
+            </button>
+            <button id="btnOpenAddModal" class="pill-btn primary" title="Add a new task or custom block">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Task</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-filter="all">All Day</button>
+          <button class="filter-tab" data-filter="pending">Pending</button>
+          <button class="filter-tab" data-filter="completed">Completed</button>
+          <button class="filter-tab" data-filter="breaks">Breaks</button>
+        </div>
+
+        <!-- The Chronological Timeline List -->
+        <div class="timeline-container" id="timelineContainer">
+          <!-- Timeline cards injected by JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-timeline hidden" id="emptyTimeline">
+          <div class="empty-icon-wrap">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h4>No tasks in your timeline yet</h4>
+          <p>Add what you want to accomplish today, and AuraPlan will calmly spread them throughout the day with healthy restorative breaks.</p>
+          <div class="empty-actions">
+            <button class="pill-btn primary" id="btnEmptyAddTask">+ Add First Task</button>
+            <button class="pill-btn outline" id="btnEmptySample">Load Sample Routine</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Add New Task -->
+    <div class="modal-overlay hidden" id="taskModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="modalTitle">Schedule New Task</h3>
+          <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">&times;</button>
+        </div>
+
+        <form id="taskForm" class="modal-form">
+          <input type="hidden" id="editTaskId" value="">
+
+          <div class="form-group">
+            <label for="taskTitleInput">What would you like to do?</label>
+            <input type="text" id="taskTitleInput" class="form-control" placeholder="e.g. Deep Work on Architecture, Morning Yoga, Review PRs..." required autofocus>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Time Required</label>
+              <div class="duration-input-wrap">
+                <input type="number" id="taskDurationInput" class="form-control" min="5" max="360" step="5" value="30" required>
+                <span class="unit-label">minutes</span>
+              </div>
+              <!-- Quick Duration Pills -->
+              <div class="quick-duration-pills">
+                <button type="button" class="duration-chip" data-min="15">15m</button>
+                <button type="button" class="duration-chip active" data-min="30">30m</button>
+                <button type="button" class="duration-chip" data-min="45">45m</button>
+                <button type="button" class="duration-chip" data-min="60">1h</button>
+                <button type="button" class="duration-chip" data-min="90">1.5h</button>
+              </div>
+            </div>
+
+            <div class="form-group flex-1">
+              <label for="taskCategorySelect">Category & Energy</label>
+              <select id="taskCategorySelect" class="form-control">
+                <option value="focus">🎯 Deep Work / Focus</option>
+                <option value="routine">🌱 Routine & Habit</option>
+                <option value="creative">🎨 Creative / Thinking</option>
+                <option value="health">🏃 Health / Fitness</option>
+                <option value="social">💬 Communication / Meetings</option>
+                <option value="break">☕ Mindful Rest & Break</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="taskStartTimeInput">Preferred Start Time (Optional)</label>
+              <input type="time" id="taskStartTimeInput" class="form-control">
+              <span class="field-hint">Leave blank to let auto-balance place it optimally.</span>
+            </div>
+            
+            <div class="form-group flex-1">
+              <label for="taskPrioritySelect">Priority</label>
+              <select id="taskPrioritySelect" class="form-control">
+                <option value="high">High Energy / Critical</option>
+                <option value="medium" selected>Standard</option>
+                <option value="low">Flexible / Leisure</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="taskNotesInput">Notes or Intentions (Optional)</label>
+            <input type="text" id="taskNotesInput" class="form-control" placeholder="e.g. Turn off phone notifications, drink tea">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="pill-btn outline" id="modalCancelBtn">Cancel</button>
+            <button type="submit" class="pill-btn primary" id="modalSubmitBtn">Add to Schedule</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Day Preferences & Break Rules -->
+    <div class="modal-overlay hidden" id="settingsModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Day & Break Preferences</h3>
+          <button class="modal-close-btn" id="settingsCloseBtn">&times;</button>
+        </div>
+
+        <form id="settingsForm" class="modal-form">
+          <p class="modal-description">
+            AuraPlan balances your hours so you never burn out, naturally spreading breaks throughout your routine.
+          </p>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="settingDayStart">Day Starts At</label>
+              <input type="time" id="settingDayStart" class="form-control" value="08:30">
+            </div>
+            <div class="form-group flex-1">
+              <label for="settingDayEnd">Day Ends At</label>
+              <input type="time" id="settingDayEnd" class="form-control" value="22:30">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="settingBreakDuration">Short Break Duration</label>
+              <div class="duration-input-wrap">
+                <input type="number" id="settingBreakDuration" class="form-control" min="5" max="30" value="10">
+                <span class="unit-label">mins</span>
+              </div>
+              <span class="field-hint">Inserted after long tasks</span>
+            </div>
+            <div class="form-group flex-1">
+              <label for="settingLunchDuration">Meal / Long Break</label>
+              <div class="duration-input-wrap">
+                <input type="number" id="settingLunchDuration" class="form-control" min="20" max="90" value="45">
+                <span class="unit-label">mins</span>
+              </div>
+              <span class="field-hint">Around mid-day (12:30-14:00)</span>
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="custom-toggle">
+              <input type="checkbox" id="settingStartFromNow">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">When auto-balancing, start from current time instead of morning</span>
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="pill-btn danger-subtle" id="btnClearAllTasks">Clear All Tasks</button>
+            <button type="submit" class="pill-btn primary">Save & Rebalance</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="toast hidden">
+      <div class="toast-content">
+        <span id="toastMessage">Notification message</span>
+      </div>
+    </div>
+
+    <!-- Gentle Sound Generator via Web Audio API -->
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
